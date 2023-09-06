@@ -1,5 +1,5 @@
 import ipywidgets as widgets
-from IPython.display import display
+from IPython.display import display, clear_output, HTML
 import requests  # Import the requests library
 
 class Quiz:
@@ -11,11 +11,11 @@ class Quiz:
             self.questions = questions
         self.user_responses = []
         self.current_question = 0
-        self.question_text = widgets.HTML()
+        self.question_text = HTML()
         self.choices_radio = widgets.RadioButtons(options=[], layout={'width': 'max-content'})
         self.submit_button = widgets.Button(description='Submit')
         self.submit_button.on_click(self.submit_response)
-        self.result_text = widgets.HTML()
+        self.result_text = HTML()
         self.display_question()
 
     def display_question(self):
@@ -31,14 +31,27 @@ class Quiz:
         if self.current_question < len(self.questions):
             self.display_question()
         else:
+            # Clear the previous question's output before displaying the result
+            clear_output(wait=True)
             self.display_result()
 
     def display_result(self):
         correct_answers = sum(response == question['answer'] for response, question in zip(self.user_responses, self.questions))
         total_questions = len(self.questions)
         result_text = f'You got {correct_answers} out of {total_questions} questions correct!'
-        self.result_text.value = result_text
-        display(self.result_text)
+        
+        # Display the result
+        display(HTML(f'<div style="font-size: larger; text-align: center;">{result_text}</div>'))
+        
+        # Display the questions with highlighting
+        for i, (user_response, question) in enumerate(zip(self.user_responses, self.questions)):
+            question_text = question['question']
+            correct_answer = question['answer']
+            if user_response != correct_answer:
+                # Highlight incorrect user response in red and correct answer in green
+                question_text = question_text.replace(user_response, f'<span style="color: red;">{user_response}</span>')
+                question_text = question_text.replace(correct_answer, f'<span style="color: green;">{correct_answer}</span>')
+            display(HTML(f'<strong>Question {i + 1}:</strong> {question_text}'))
 
     def load_questions_from_url(self, url):
         try:
