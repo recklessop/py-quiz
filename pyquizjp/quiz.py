@@ -4,6 +4,7 @@ import requests  # Import the requests library
 
 class Quiz:
     def __init__(self, url=None, questions=None):
+        self.__version__ = "0.5"
         self.questions = []
         if url:
             self.load_questions_from_url(url)
