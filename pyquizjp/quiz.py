@@ -1,6 +1,6 @@
 import requests
 from google.colab import widgets
-from IPython.display import display, clear_output, HTML  # Use IPython's HTML widget
+from IPython.display import display, clear_output, HTML
 
 class Quiz:
     def __init__(self, url=None, questions=None):
@@ -11,11 +11,11 @@ class Quiz:
             self.questions = questions
         self.user_responses = []
         self.current_question = 0
-        self.question_text = HTML()  # Use HTML widget here
-        self.choices_radio = widgets.RadioButtons(options=[], layout={'width': 'max-content'})
+        self.question_text = HTML()
+        self.choices_radio = widgets.RadioButtons(options=[], description='Options:')
         self.submit_button = widgets.Button(description='Submit')
         self.submit_button.on_click(self.submit_response)
-        self.result_text = HTML()  # Use HTML widget here
+        self.result_text = HTML()
         self.display_question()
 
     def display_question(self):
