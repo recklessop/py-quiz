@@ -15,13 +15,17 @@ class Quiz:
         self.choices_radio = widgets.RadioButtons(options=[], layout={'width': 'max-content'})
         self.submit_button = widgets.Button(description='Submit')
         self.submit_button.on_click(self.submit_response)
-        
-        # Define the feedback output widget for displaying results
-        self.feedback_output = widgets.Output(layout={'border': '1px solid black'})
-        
-        # Create a container to hold the feedback output widget
-        self.widget_container = widgets.VBox()
-        self.widget_container.children = [self.question_text, self.choices_radio, self.submit_button, self.feedback_output]
+
+        # Create a container to hold the quiz widgets
+        self.quiz_container = widgets.VBox()
+        self.result_output = widgets.Output()
+
+        self.quiz_container.children = [
+            self.question_text,
+            self.choices_radio,
+            self.submit_button,
+            self.result_output
+        ]
         
         self.display_question()
 
@@ -67,8 +71,8 @@ class Quiz:
                 result_text += f'   Correct Answer: <span style="color: green;">{correct_answer}</span><br>'
                 result_text += f'   Your Answer: <span style="color: red;">{user_response}</span><br>'
     
-        # Display the result text in the feedback output widget
-        with self.feedback_output:
+        # Display the result text in the result_output widget
+        with self.result_output:
             clear_output(wait=True)
             display(HTML(result_text))
 
