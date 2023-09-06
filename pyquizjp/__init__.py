@@ -1,1 +1,1 @@
-
+from .quiz import Quiz
