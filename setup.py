@@ -1,8 +1,9 @@
 from setuptools import setup
+from pyquizjp.__version__ import __version__
 
 setup(
     name='pyquizjp',
-    version='0.5.4',
+    version=__version__,
     description='A quiz module for interactive Python quizzes',
     author='Justin Paul',
     author_email='justin@jpaul.me',
