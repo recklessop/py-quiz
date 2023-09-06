@@ -21,7 +21,7 @@ class Quiz:
         
         # Create a container to hold the feedback output widget
         self.widget_container = widgets.VBox()
-        self.widget_container.children = [self.feedback_output]
+        self.widget_container.children = [self.question_text, self.choices_radio, self.submit_button, self.feedback_output]
         
         self.display_question()
 
@@ -29,7 +29,6 @@ class Quiz:
         question = self.questions[self.current_question]
         self.question_text.value = f'<strong>Question {self.current_question + 1}:</strong> {question["question"]}'
         self.choices_radio.options = question['choices']
-        display(self.question_text, self.choices_radio, self.submit_button)
 
     def submit_response(self, b):
         user_response = self.choices_radio.value
