@@ -16,41 +16,41 @@ class Quiz:
         self.submit_button = widgets.Button(description='Submit')
         self.submit_button.on_click(self.submit_response)
 
-#    def display_question(self):
-#        question = self.questions[self.current_question]
-#        self.question_text.value = f'<strong>Question {self.current_question + 1}:</strong> {question["question"]}'
-#        self.choices_radio.options = question['choices']
-#        display(self.question_text, self.choices_radio, self.submit_button)
+    def display_question(self):
+        question = self.questions[self.current_question]
+        self.question_text.value = f'<strong>Question {self.current_question + 1}:</strong> {question["question"]}'
+        self.choices_radio.options = question['choices']
+        display(self.question_text, self.choices_radio, self.submit_button)
 
-#    def submit_response(self, b):
-#        user_response = self.choices_radio.value
-#        self.user_responses.append(user_response)
-#        self.current_question += 1
-#        if self.current_question < len(self.questions):
-#            self.display_question()
-#        else:
-#            result = self.calculate_result()
-#            return result
+    def submit_response(self, b):
+        user_response = self.choices_radio.value
+        self.user_responses.append(user_response)
+        self.current_question += 1
+        if self.current_question < len(self.questions):
+            self.display_question()
+        else:
+            result = self.calculate_result()
+            return result
 
-#    def calculate_result(self):
-#        correct_answers = sum(response == question['answer'] for response, question in zip(self.user_responses, self.questions))
-#        total_questions = len(self.questions)
+    def calculate_result(self):
+        correct_answers = sum(response == question['answer'] for response, question in zip(self.user_responses, self.questions))
+        total_questions = len(self.questions)
 
-#        result = {
-#            'correct_answers': correct_answers,
-#            'total_questions': total_questions,
-#            'incorrect_questions': []
-#        }
+        result = {
+            'correct_answers': correct_answers,
+            'total_questions': total_questions,
+            'incorrect_questions': []
+        }
 
- #       for i, (user_response, question) in enumerate(zip(self.user_responses, self.questions)):
- #           if user_response != question['answer']:
- #               result['incorrect_questions'].append({
- #                   'question_text': question['question'],
- #                   'correct_answer': question['answer'],
- #                   'user_response': user_response
- #               })
+        for i, (user_response, question) in enumerate(zip(self.user_responses, self.questions)):
+            if user_response != question['answer']:
+                result['incorrect_questions'].append({
+                    'question_text': question['question'],
+                    'correct_answer': question['answer'],
+                    'user_response': user_response
+                })
 
- #       return result
+        return result
 
     def load_questions_from_url(self, url):
         try:
