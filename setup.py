@@ -1,5 +1,5 @@
 from setuptools import setup
-from .pyquizjp.__version__ import __version__
+#from .pyquizjp.__version__ import __version__
 
 setup(
     name='pyquizjp',
