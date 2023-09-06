@@ -3,7 +3,7 @@ from .pyquizjp.__version__ import __version__
 
 setup(
     name='pyquizjp',
-    version='0.5.7',
+    version='0.6.0',
     description='A quiz module for interactive Python quizzes',
     author='Justin Paul',
     author_email='justin@jpaul.me',
