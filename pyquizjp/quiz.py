@@ -19,7 +19,7 @@ class Quiz:
         self.display_question()
 
     def display_question(self):
-        clear_output(wait=True)
+        #clear_output(wait=True)
         question = self.questions[self.current_question]
         self.question_text.value = f'<strong>Question {self.current_question + 1}:</strong> {question["question"]}'
         self.choices_radio.options = question['choices']
