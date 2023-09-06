@@ -16,12 +16,12 @@ class Quiz:
         self.submit_button = widgets.Button(description='Submit')
         self.submit_button.on_click(self.submit_response)
         
-        # Define the feedback text widget for displaying results
-        self.feedback_text = HTML()
+        # Define the feedback output widget for displaying results
+        self.feedback_output = widgets.Output(layout={'border': '1px solid black'})
         
-        # Create a container to hold the feedback text widget
+        # Create a container to hold the feedback output widget
         self.widget_container = widgets.VBox()
-        self.widget_container.children = [self.feedback_text]
+        self.widget_container.children = [self.feedback_output]
         
         self.display_question()
 
@@ -68,11 +68,10 @@ class Quiz:
                 result_text += f'   Correct Answer: <span style="color: green;">{correct_answer}</span><br>'
                 result_text += f'   Your Answer: <span style="color: red;">{user_response}</span><br>'
     
-        self.feedback_text.value = result_text
-    
-        # Clear the previous widget display and display the result
-        self.widget_container.children = []
-        self.widget_container.children = [self.feedback_text]
+        # Display the result text in the feedback output widget
+        with self.feedback_output:
+            clear_output(wait=True)
+            display(HTML(result_text))
 
     def load_questions_from_url(self, url):
         try:
@@ -85,4 +84,3 @@ class Quiz:
                 print("Invalid data format from the URL. Expecting a list of questions.")
         except Exception as e:
             print(f"Error loading questions from URL: {e}")
-            
