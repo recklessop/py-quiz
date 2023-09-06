@@ -1,12 +1,6 @@
-<<<<<<< HEAD
-import requests
-from google.colab import widgets
-from IPython.display import display, clear_output, HTML
-=======
 import ipywidgets as widgets
 from IPython.display import display
 import requests  # Import the requests library
->>>>>>> parent of e3dc769 (Update quiz.py)
 
 class Quiz:
     def __init__(self, url=None, questions=None):
@@ -17,15 +11,14 @@ class Quiz:
             self.questions = questions
         self.user_responses = []
         self.current_question = 0
-        self.question_text = HTML()
-        self.choices_radio = widgets.RadioButtons(options=[], description='Options:')
+        self.question_text = widgets.HTML()
+        self.choices_radio = widgets.RadioButtons(options=[], layout={'width': 'max-content'})
         self.submit_button = widgets.Button(description='Submit')
         self.submit_button.on_click(self.submit_response)
-        self.result_text = HTML()
+        self.result_text = widgets.HTML()
         self.display_question()
 
     def display_question(self):
-        clear_output(wait=True)
         question = self.questions[self.current_question]
         self.question_text.value = f'<strong>Question {self.current_question + 1}:</strong> {question["question"]}'
         self.choices_radio.options = question['choices']
@@ -36,10 +29,8 @@ class Quiz:
         self.user_responses.append(user_response)
         self.current_question += 1
         if self.current_question < len(self.questions):
-            #clear_output(wait=True)
             self.display_question()
         else:
-            #clear_output(wait=True)
             self.display_result()
 
     def display_result(self):
@@ -60,16 +51,3 @@ class Quiz:
                 print("Invalid data format from the URL. Expecting a list of questions.")
         except Exception as e:
             print(f"Error loading questions from URL: {e}")
-
-# Example usage with a URL
-# quiz_instance = Quiz(url="https://example.com/questions.json")
-
-# Example usage with a JSON object
-# quiz_instance = Quiz(questions=[
-#     {
-#         'question': 'What is the capital of France?',
-#         'choices': ['London', 'Paris', 'Berlin'],
-#         'answer': 'Paris'
-#     },
-#     # Add more questions here...
-# ])
