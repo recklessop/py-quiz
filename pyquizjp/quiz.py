@@ -19,6 +19,7 @@ class Quiz:
         self.display_question()
 
     def display_question(self):
+        clear_output(wait=True)
         question = self.questions[self.current_question]
         self.question_text.value = f'<strong>Question {self.current_question + 1}:</strong> {question["question"]}'
         self.choices_radio.options = question['choices']
@@ -29,8 +30,10 @@ class Quiz:
         self.user_responses.append(user_response)
         self.current_question += 1
         if self.current_question < len(self.questions):
+            clear_output(wait=True)
             self.display_question()
         else:
+            clear_output(wait=True)
             self.display_result()
 
     def display_result(self):
