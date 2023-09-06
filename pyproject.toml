@@ -1,3 +1,13 @@
 [build-system]
 requires = ["setuptools", "wheel", "requests"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyquizjp"
+version = "0.6.0"
+description = "Quiz system for my Python learning course"
+authors = [
+  { name="Justin Paul", email="justin@jpaul.em" },
+]
+readme = "README.md"
+license = {file = "LICENSE"}
