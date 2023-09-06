@@ -30,10 +30,10 @@ class Quiz:
         self.user_responses.append(user_response)
         self.current_question += 1
         if self.current_question < len(self.questions):
-            clear_output(wait=True)
+            #clear_output(wait=True)
             self.display_question()
         else:
-            clear_output(wait=True)
+            #clear_output(wait=True)
             self.display_result()
 
     def display_result(self):
