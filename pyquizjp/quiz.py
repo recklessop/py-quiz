@@ -1,6 +1,6 @@
 import ipywidgets as widgets
-from IPython.display import display, HTML
-import requests
+from IPython.display import display, clear_output, HTML
+import requests  # Import the requests library
 
 class Quiz:
     def __init__(self, url=None, questions=None):
@@ -15,6 +15,12 @@ class Quiz:
         self.choices_radio = widgets.RadioButtons(options=[], layout={'width': 'max-content'})
         self.submit_button = widgets.Button(description='Submit')
         self.submit_button.on_click(self.submit_response)
+        self.result_text = HTML()
+
+    def start_quiz(self):
+        self.user_responses = []
+        self.current_question = 0
+        self.display_question()
 
     def display_question(self):
         question = self.questions[self.current_question]
@@ -29,28 +35,39 @@ class Quiz:
         if self.current_question < len(self.questions):
             self.display_question()
         else:
-            result = self.calculate_result()
+            # Clear the previous question's output before displaying the result
+            clear_output(wait=True)
+            result = self.display_result()
             return result
 
-    def calculate_result(self):
-        correct_answers = sum(response == question['answer'] for response, question in zip(self.user_responses, self.questions))
-        total_questions = len(self.questions)
-
-        result = {
-            'correct_answers': correct_answers,
-            'total_questions': total_questions,
-            'incorrect_questions': []
-        }
-
-        for i, (user_response, question) in enumerate(zip(self.user_responses, self.questions)):
-            if user_response != question['answer']:
-                result['incorrect_questions'].append({
-                    'question_text': question['question'],
-                    'correct_answer': question['answer'],
-                    'user_response': user_response
-                })
-
-        return result
+    def display_result(self):
+            correct_answers = sum(response == question['answer'] for response, question in zip(self.user_responses, self.questions))
+            total_questions = len(self.questions)
+            result_text = f'You got {correct_answers} out of {total_questions} questions correct!<br><br>'
+    
+            # Create a list to store the incorrect questions and their details
+            incorrect_questions = []
+    
+            for i, (user_response, question) in enumerate(zip(self.user_responses, self.questions)):
+                if user_response != question['answer']:
+                    incorrect_questions.append({
+                        'question_text': question['question'],
+                        'correct_answer': question['answer'],
+                        'user_response': user_response
+                    })
+    
+            if len(incorrect_questions) > 0:
+                result_text += '<strong>Incorrect Questions:</strong><br>'
+                for i, incorrect_question in enumerate(incorrect_questions, 1):
+                    question_text = incorrect_question['question_text']
+                    correct_answer = incorrect_question['correct_answer']
+                    user_response = incorrect_question['user_response']
+                    result_text += f'{i}. {question_text}<br>'
+                    result_text += f'   Correct Answer: <span style="color: green;">{correct_answer}</span><br>'
+                    result_text += f'   Your Answer: <span style="color: red;">{user_response}</span><br>'
+    
+            self.result_text.value = result_text
+            display(self.result_text)
 
     def load_questions_from_url(self, url):
         try:
