@@ -25,13 +25,13 @@ class Quiz:
     def create_question_widget(self):
         question = self.questions[self.current_question_index]
         question_text = f"<b>Question {self.current_question_index + 1}:</b> {question['question']}"
-        choices = question['choices']
 
-        choice_widgets = [widgets.RadioButtons(options=choices, description=f"Choice {i+1}:") for i in range(len(choices))]
+        choice_widgets = [widgets.RadioButtons(options=question['choices'], description=f"Choice {i+1}:") for i in range(len(question['choices']))]
         submit_button = widgets.Button(description="Submit")
         submit_button.on_click(self.submit_answer)
 
-        return widgets.VBox([HTML(value=question_text)] + choice_widgets + [submit_button])
+        question_html = HTML(value=question_text)
+        return widgets.VBox([question_html] + choice_widgets + [submit_button])
 
     def display_question(self):
         question_widget = self.create_question_widget()
