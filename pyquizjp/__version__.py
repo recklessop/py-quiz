@@ -1,7 +1,7 @@
 __title__ = "pyquizjp"
 __description__ = "Python quiz module from recklessop"
 __url__ = "https://github.com/recklessop/pyquizjp"
-__version__ = "0.7.2"
+__version__ = "0.8.0"
 __build__ = 0x023100
 __author__ = "Justin Paul"
 __author_email__ = "justin@jpaul.me"
