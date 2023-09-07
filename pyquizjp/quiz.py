@@ -39,7 +39,7 @@ class Quiz:
     def run_quiz(self):
         while self.current_question_index < len(self.questions):
             self.display_question()
-            user_choice = input("Enter the number of your choice: ")  # Get user's choice
+            user_choice = input("Enter the number of your choice:\n")  # Get user's choice
             if user_choice.isdigit():
                 user_choice = int(user_choice)
                 if 1 <= user_choice <= len(self.questions[self.current_question_index]['choices']):
