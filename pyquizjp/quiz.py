@@ -1,5 +1,6 @@
 import json
 import requests
+from IPython.display import Markdown, display
 
 class Quiz:
     def __init__(self):
@@ -21,11 +22,11 @@ class Quiz:
     def display_question(self):
         if self.current_question_index < len(self.questions):
             question = self.questions[self.current_question_index]
-            print(f"Question {self.current_question_index + 1}: {question['question']}")
-            for i, choice in enumerate(question['choices']):
-                print(f"{i + 1}. {choice}")
+            question_text = f"**Question {self.current_question_index + 1}:** {question['question']}\n"
+            choices_text = "\n".join([f"{i + 1}. {choice}" for i, choice in enumerate(question['choices'])])
+            display(Markdown(question_text + choices_text))
         else:
-            print("The quiz is over.")
+            print("Quiz is over.")
 
     def check_answer(self, user_answer):
         if self.current_question_index < len(self.questions):
@@ -44,9 +45,10 @@ class Quiz:
                 if 1 <= user_choice <= len(self.questions[self.current_question_index]['choices']):
                     user_answer = self.questions[self.current_question_index]['choices'][user_choice - 1]
                     if self.check_answer(user_answer):
-                        print("Correct!")
+                        display(Markdown('<font color="green"><b>Correct!</b></font>'))
                     else:
-                        print(f"Incorrect. The correct answer is: {self.questions[self.current_question_index]['answer']}")
+                        correct_answer = self.questions[self.current_question_index]['answer']
+                        display(Markdown(f'<font color="red"><b>Incorrect. The correct answer is: {correct_answer}</b></font>'))
                     self.current_question_index += 1
                 else:
                     print("Invalid choice. Please select a valid choice.")
