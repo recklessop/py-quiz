@@ -22,14 +22,15 @@ class Quiz:
         if self.current_question_index < len(self.questions):
             question = self.questions[self.current_question_index]
             print(f"Question {self.current_question_index + 1}: {question['question']}")
-            # Display options, e.g., using radio buttons or input fields in Jupyter Notebook
+            for i, choice in enumerate(question['choices']):
+                print(f"{i + 1}. {choice}")
         else:
-            print("Quiz is over.")
+            print("The quiz is over.")
 
     def check_answer(self, user_answer):
         if self.current_question_index < len(self.questions):
             question = self.questions[self.current_question_index]
-            correct_answer = question['correct_answer']
+            correct_answer = question['answer']
             return user_answer == correct_answer
         else:
             return False
@@ -37,12 +38,20 @@ class Quiz:
     def run_quiz(self):
         while self.current_question_index < len(self.questions):
             self.display_question()
-            user_answer = input("Your answer: ")  # Get user's answer (for Jupyter, you'd use widgets)
-            if self.check_answer(user_answer):
-                print("Correct!")
+            user_choice = input("Enter the number of your choice: ")  # Get user's choice
+            if user_choice.isdigit():
+                user_choice = int(user_choice)
+                if 1 <= user_choice <= len(self.questions[self.current_question_index]['choices']):
+                    user_answer = self.questions[self.current_question_index]['choices'][user_choice - 1]
+                    if self.check_answer(user_answer):
+                        print("Correct!")
+                    else:
+                        print(f"Incorrect. The correct answer is: {self.questions[self.current_question_index]['answer']}")
+                    self.current_question_index += 1
+                else:
+                    print("Invalid choice. Please select a valid choice.")
             else:
-                print(f"Incorrect. The correct answer is: {self.questions[self.current_question_index]['correct_answer']}")
-            self.current_question_index += 1
+                print("Invalid input. Please enter a number.")
 
 if __name__ == "__main__":
     print("This module should not be run directly. Please import it and use it within your application.")
