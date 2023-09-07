@@ -1,82 +1,59 @@
-import ipywidgets as widgets
-from IPython.display import display, clear_output, HTML
-import requests  # Import the requests library
+import json
+import requests
+from IPython.display import Markdown, display
 
 class Quiz:
-    def __init__(self, url=None, questions=None):
+    def __init__(self):
         self.questions = []
-        if url:
-            self.load_questions_from_url(url)
-        elif questions:
-            self.questions = questions
-        self.user_responses = []
-        self.current_question = 0
-        self.question_text = HTML()
-        self.choices_radio = widgets.RadioButtons(options=[], layout={'width': 'max-content'})
-        self.submit_button = widgets.Button(description='Submit')
-        self.submit_button.on_click(self.submit_response)
-        self.result_text = HTML()
+        self.current_question_index = 0
 
-    def start_quiz(self):
-        self.user_responses = []
-        self.current_question = 0
-        self.display_question()
+    def load_from_json(self, json_data):
+        # Load questions from a JSON object
+        self.questions = json.loads(json_data)
+
+    def load_from_url(self, url):
+        # Load questions from a URL
+        response = requests.get(url)
+        if response.status_code == 200:
+            self.questions = response.json()
+        else:
+            raise Exception(f"Failed to load questions from {url}")
 
     def display_question(self):
-        question = self.questions[self.current_question]
-        self.question_text.value = f'<strong>Question {self.current_question + 1}:</strong> {question["question"]}'
-        self.choices_radio.options = question['choices']
-        display(self.question_text, self.choices_radio, self.submit_button)
-
-    def submit_response(self, b):
-        user_response = self.choices_radio.value
-        self.user_responses.append(user_response)
-        self.current_question += 1
-        if self.current_question < len(self.questions):
-            self.display_question()
+        if self.current_question_index < len(self.questions):
+            question = self.questions[self.current_question_index]
+            question_text = f"**Question {self.current_question_index + 1}:** {question['question']}\n"
+            choices_text = "\n".join([f"{i + 1}. {choice}" for i, choice in enumerate(question['choices'])])
+            display(Markdown(question_text + choices_text))
         else:
-            # Clear the previous question's output before displaying the result
-            clear_output(wait=True)
-            result = self.display_result()
-            return result
+            print("Quiz is over.")
 
-    def display_result(self):
-            correct_answers = sum(response == question['answer'] for response, question in zip(self.user_responses, self.questions))
-            total_questions = len(self.questions)
-            result_text = f'You got {correct_answers} out of {total_questions} questions correct!<br><br>'
-    
-            # Create a list to store the incorrect questions and their details
-            incorrect_questions = []
-    
-            for i, (user_response, question) in enumerate(zip(self.user_responses, self.questions)):
-                if user_response != question['answer']:
-                    incorrect_questions.append({
-                        'question_text': question['question'],
-                        'correct_answer': question['answer'],
-                        'user_response': user_response
-                    })
-    
-            if len(incorrect_questions) > 0:
-                result_text += '<strong>Incorrect Questions:</strong><br>'
-                for i, incorrect_question in enumerate(incorrect_questions, 1):
-                    question_text = incorrect_question['question_text']
-                    correct_answer = incorrect_question['correct_answer']
-                    user_response = incorrect_question['user_response']
-                    result_text += f'{i}. {question_text}<br>'
-                    result_text += f'   Correct Answer: <span style="color: green;">{correct_answer}</span><br>'
-                    result_text += f'   Your Answer: <span style="color: red;">{user_response}</span><br>'
-    
-            self.result_text.value = result_text
-            display(self.result_text)
+    def check_answer(self, user_answer):
+        if self.current_question_index < len(self.questions):
+            question = self.questions[self.current_question_index]
+            correct_answer = question['answer']
+            return user_answer == correct_answer
+        else:
+            return False
 
-    def load_questions_from_url(self, url):
-        try:
-            response = requests.get(url)
-            response.raise_for_status()
-            data = response.json()
-            if isinstance(data, list):
-                self.questions = data
+    def run_quiz(self):
+        while self.current_question_index < len(self.questions):
+            self.display_question()
+            user_choice = input("Enter the number of your choice: ")  # Get user's choice
+            if user_choice.isdigit():
+                user_choice = int(user_choice)
+                if 1 <= user_choice <= len(self.questions[self.current_question_index]['choices']):
+                    user_answer = self.questions[self.current_question_index]['choices'][user_choice - 1]
+                    if self.check_answer(user_answer):
+                        display(Markdown('<font color="green"><b>Correct!</b></font>'))
+                    else:
+                        correct_answer = self.questions[self.current_question_index]['answer']
+                        display(Markdown(f'<font color="red"><b>Incorrect. The correct answer is: {correct_answer}</b></font>'))
+                    self.current_question_index += 1
+                else:
+                    print("Invalid choice. Please select a valid choice.")
             else:
-                print("Invalid data format from the URL. Expecting a list of questions.")
-        except Exception as e:
-            print(f"Error loading questions from URL: {e}")
+                print("Invalid input. Please enter a number.")
+
+if __name__ == "__main__":
+    print("This module should not be run directly. Please import it and use it within your application.")

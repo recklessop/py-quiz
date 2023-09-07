@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyquizjp"
-version = "0.6.1"
+version = "0.7.2"
 description = "Quiz system for my Python learning course"
 authors = [
   { name="Justin Paul", email="justin@jpaul.em" },
