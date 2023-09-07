@@ -45,4 +45,4 @@ class Quiz:
             self.current_question_index += 1
 
 if __name__ == "__main__":
-# You can add code here to test the Quiz class in a regular Python script.
+    print("This module should not be run directly. Please import it and use it within your application.")
