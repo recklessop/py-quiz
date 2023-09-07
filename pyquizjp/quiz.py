@@ -1,11 +1,14 @@
 import json
 import requests
-from IPython.display import Markdown, display
+import ipywidgets as widgets
+from IPython.display import display, HTML
 
 class Quiz:
     def __init__(self):
         self.questions = []
         self.current_question_index = 0
+        self.user_choices = []
+        self.output = widgets.Output()
 
     def load_from_json(self, json_data):
         # Load questions from a JSON object
@@ -19,41 +22,56 @@ class Quiz:
         else:
             raise Exception(f"Failed to load questions from {url}")
 
-    def display_question(self):
-        if self.current_question_index < len(self.questions):
-            question = self.questions[self.current_question_index]
-            question_text = f"**Question {self.current_question_index + 1}:** {question['question']}\n"
-            choices_text = "\n".join([f"{i + 1}. {choice}" for i, choice in enumerate(question['choices'])])
-            display(Markdown(question_text + choices_text))
-        else:
-            print("Quiz is over.")
+    def create_question_widget(self):
+        question = self.questions[self.current_question_index]
+        question_text = f"<b>Question {self.current_question_index + 1}:</b> {question['question']}"
+        choices = question['choices']
 
-    def check_answer(self, user_answer):
-        if self.current_question_index < len(self.questions):
-            question = self.questions[self.current_question_index]
-            correct_answer = question['answer']
-            return user_answer == correct_answer
-        else:
-            return False
+        choice_widgets = [widgets.RadioButtons(options=choices, description=f"Choice {i+1}:") for i in range(len(choices))]
+        submit_button = widgets.Button(description="Submit")
+        submit_button.on_click(self.submit_answer)
+
+        return widgets.VBox([HTML(value=question_text)] + choice_widgets + [submit_button])
+
+    def display_question(self):
+        question_widget = self.create_question_widget()
+        with self.output:
+            display(question_widget)
+
+    def submit_answer(self, button):
+        question = self.questions[self.current_question_index]
+        user_choice = None
+        for i, choice in enumerate(question['choices']):
+            if self.user_choices[i].value:
+                user_choice = choice
+                break
+        
+        if user_choice is not None:
+            if user_choice == question['answer']:
+                self.output.clear_output()
+                with self.output:
+                    display(HTML('<font color="green"><b>Correct!</b></font>'))
+            else:
+                correct_answer = question['answer']
+                self.output.clear_output()
+                with self.output:
+                    display(HTML(f'<font color="red"><b>Incorrect. The correct answer is: {correct_answer}</b></font>'))
+            self.current_question_index += 1
+            self.user_choices = []
+            if self.current_question_index < len(self.questions):
+                self.display_question()
+            else:
+                self.output.clear_output()
+                with self.output:
+                    display(HTML('<b>Quiz is over.</b>'))
 
     def run_quiz(self):
-        while self.current_question_index < len(self.questions):
-            self.display_question()
-            user_choice = input("Enter the number of your choice: ")  # Get user's choice
-            if user_choice.isdigit():
-                user_choice = int(user_choice)
-                if 1 <= user_choice <= len(self.questions[self.current_question_index]['choices']):
-                    user_answer = self.questions[self.current_question_index]['choices'][user_choice - 1]
-                    if self.check_answer(user_answer):
-                        display(Markdown('<font color="green"><b>Correct!</b></font>'))
-                    else:
-                        correct_answer = self.questions[self.current_question_index]['answer']
-                        display(Markdown(f'<font color="red"><b>Incorrect. The correct answer is: {correct_answer}</b></font>'))
-                    self.current_question_index += 1
-                else:
-                    print("Invalid choice. Please select a valid choice.")
-            else:
-                print("Invalid input. Please enter a number.")
+        if len(self.questions) == 0:
+            print("No questions to display. Load questions first.")
+            return
+
+        self.display_question()
+        display(self.output)
 
 if __name__ == "__main__":
     print("This module should not be run directly. Please import it and use it within your application.")
