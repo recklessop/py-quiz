@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='pyquizjp',
-    version='0.7.0',
+    version='0.7.1',
     description='A quiz module for interactive Python quizzes',
     author='Justin Paul',
     author_email='justin@jpaul.me',
